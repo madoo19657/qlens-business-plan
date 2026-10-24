@@ -1,0 +1,1310 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>QLens 사업기획서</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>
+/* Layout: 한 컬럼 문서. 위쪽 고정 바에 장 목차(가로 스크롤), 장마다 번호 칩 + 제목, 표는 자체 스크롤 상자. 렌즈 청록을 유일한 강조색으로 쓰고 숫자와 가정 ID는 모노로 둔다. */
+:root{
+  --bg:#f3f6f7; --surface:#ffffff; --ink:#14232b; --muted:#566a73; --line:#d3dde1;
+  --accent:#0a7894; --accent-ink:#ffffff; --soft:#e0eff3; --head-bg:#102a35; --head-ink:#eef6f8; --head-muted:#9fbac4;
+  --warn:#8a5a0c; --warn-bg:#f6ecd5; --code-bg:#eaf0f2;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono","SF Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c161b; --surface:#122128; --ink:#e4eef1; --muted:#97adb6; --line:#25383f;
+  --accent:#4cc3df; --accent-ink:#062129; --soft:#14313b; --head-bg:#08121a; --head-ink:#eef6f8; --head-muted:#8da9b3;
+  --warn:#e3b45e; --warn-bg:#2d2514; --code-bg:#0a171d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c161b; --surface:#122128; --ink:#e4eef1; --muted:#97adb6; --line:#25383f;
+  --accent:#4cc3df; --accent-ink:#062129; --soft:#14313b; --head-bg:#08121a; --head-ink:#eef6f8; --head-muted:#8da9b3;
+  --warn:#e3b45e; --warn-bg:#2d2514; --code-bg:#0a171d; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.75;word-break:keep-all;overflow-wrap:break-word}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:10}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:920px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{line-height:1.35;margin:0;text-wrap:balance}
+p{margin:0 0 12px}
+a{color:var(--accent)}
+table,.num{font-variant-numeric:tabular-nums}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-row{display:flex;align-items:center;gap:16px;min-height:52px}
+.brand{font-family:var(--f-mono);font-weight:500;font-size:15px;letter-spacing:.04em;color:var(--ink);text-decoration:none;flex:none}
+.nav{display:flex;gap:2px;overflow-x:auto;min-width:0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.nav::-webkit-scrollbar{display:none}
+.nav a{flex:none;padding:6px 11px;border-radius:6px;font-size:13.5px;color:var(--muted);text-decoration:none;white-space:nowrap}
+.nav a:hover{background:var(--soft);color:var(--ink)}
+.nav a.on{background:var(--soft);color:var(--accent);font-weight:600}
+
+.head{background:var(--head-bg);color:var(--head-ink);padding-block:44px 40px}
+.eyebrow{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--head-muted);margin:0 0 14px}
+.head h1{font-size:clamp(30px,6vw,46px);font-weight:700;letter-spacing:-.02em}
+.sub{margin:12px 0 26px;font-size:clamp(16px,2.4vw,19px);color:var(--head-muted)}
+.notice{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:14px 18px;font-size:14.5px;color:var(--head-ink)}
+.notice p{margin:0}
+.notice a{color:inherit}
+.notice code{background:rgba(255,255,255,.14);color:inherit}
+
+main{padding-block:12px 40px}
+.sec{padding-top:44px}
+.sec-h{display:flex;align-items:baseline;gap:14px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:20px}
+.chap{flex:none;font-family:var(--f-mono);font-size:13px;font-weight:500;background:var(--accent);color:var(--accent-ink);border-radius:4px;padding:1px 9px;line-height:1.7}
+.sec-h h2{font-size:clamp(21px,3.6vw,27px);font-weight:700;letter-spacing:-.01em}
+.sec h3{font-size:19px;font-weight:600;margin:34px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.sec h4{font-size:16px;font-weight:600;margin:22px 0 8px;color:var(--accent)}
+ul,ol{margin:0 0 14px;padding-left:1.35em}
+li{margin:3px 0}
+.sec>p.lab{margin:22px 0 0;font-size:15px;font-weight:600;color:var(--accent)}
+.sec>ol{list-style:none;counter-reset:st;padding:0;margin:8px 0 18px;display:grid;gap:8px}
+.sec>ol>li{counter-increment:st;position:relative;margin:0;padding:11px 14px 11px 52px;background:var(--surface);border:1px solid var(--line);border-radius:6px;min-height:48px}
+.sec>ol>li::before{content:counter(st);position:absolute;left:14px;top:11px;width:26px;height:26px;border-radius:50%;background:var(--soft);color:var(--accent);font-family:var(--f-mono);font-size:13px;font-weight:500;display:grid;place-items:center;line-height:1}
+li>ul,li>ol{margin:4px 0}
+strong{font-weight:600}
+hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+
+.table-scroll{overflow-x:auto;margin:16px 0 20px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.55}
+th,td{padding:9px 13px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--soft);font-weight:600;font-size:13.5px;white-space:nowrap}
+td:first-child{font-weight:500}
+@media(max-width:640px){th{white-space:normal}table{min-width:520px}}
+
+blockquote{margin:16px 0;padding:10px 16px;background:var(--soft);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;color:var(--ink)}
+blockquote p:last-child{margin:0}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--code-bg);padding:1px 6px;border-radius:4px}
+pre{font-family:var(--f-mono);font-size:13px;line-height:1.6;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow-x:auto;margin:14px 0 20px}
+pre code{background:none;padding:0;font-size:inherit}
+.todo{display:inline-block;font-size:12.5px;font-weight:600;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:0 7px;line-height:1.6;white-space:nowrap}
+.aid{font-family:var(--f-mono);font-size:.8em;color:var(--muted);white-space:nowrap}
+.head .aid{color:var(--head-muted)}
+
+.foot{border-top:1px solid var(--line);padding-block:22px 34px;font-size:13px;color:var(--muted)}
+@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+.fig{margin:18px 0 22px;padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.fig-scroll{overflow-x:auto}
+.arch{display:block;width:100%;min-width:720px;height:auto;font-family:var(--f-body)}
+.arch .lane{fill:var(--bg);stroke:var(--line);stroke-width:1;stroke-dasharray:4 4}
+.arch .n{fill:var(--surface);stroke:var(--line);stroke-width:1.2}
+.arch .n.hi{fill:var(--soft);stroke:var(--accent);stroke-width:1.6}
+.arch .t{fill:var(--ink);font-size:14px;font-weight:600}
+.arch .s{fill:var(--muted);font-size:12px}
+.arch .lt{fill:var(--accent);font-size:13px;font-weight:600;letter-spacing:.02em}
+.arch .ls{fill:var(--muted);font-size:11.5px}
+.arch .a{fill:none;stroke:var(--muted);stroke-width:1.5}
+.arch .a.up{stroke:var(--accent);stroke-width:2}
+.arch .ahp{fill:var(--muted)}
+.fig figcaption{margin-top:10px;font-size:13.5px;color:var(--muted)}
+.arch .grid{fill:none;stroke:var(--line);stroke-width:1;stroke-dasharray:2 5}
+.arch .ws{fill:var(--soft);fill-opacity:.55;stroke:var(--accent);stroke-width:1.2;stroke-dasharray:5 4}
+.arch .wst{fill:var(--accent);font-size:12px;font-weight:600;letter-spacing:.06em}
+
+</style></head><body>
+<div class="bar"><div class="wrap bar-row"><a class="brand" href="#top">QLens</a><nav class="nav" aria-label="장 목차"><a href="#s0" data-s="s0">표지</a><a href="#s1" data-s="s1">문제 정의</a><a href="#s2" data-s="s2">솔루션</a><a href="#s3" data-s="s3">기술</a><a href="#s4" data-s="s4">시장 분석</a><a href="#s5" data-s="s5">비즈니스 모델</a><a href="#s6" data-s="s6">사업화 전략 (GTM)</a><a href="#s7" data-s="s7">재무 계획</a><a href="#s8" data-s="s8">팀</a><a href="#s9" data-s="s9">리스크</a><a href="#s10" data-s="s10">마일스톤</a><a href="#s11" data-s="s11">부록</a></nav></div></div>
+<header class="head" id="top"><div class="wrap">
+<p class="eyebrow">사업기획서 · 종합본 · 초안 v0.1</p>
+<h1>QLens 사업기획서</h1>
+<p class="sub">앱 설치 없이 90초, AI 비대면 단말 진단 · 주식회사 큐램(Qram) · 2026-10</p>
+<div class="notice"><p><strong>문서 성격</strong>: 일반 사업기획서 목차(문제 → 솔루션 → 기술 → 시장 → 모델 → GTM → 재무 → 팀 → 리스크 → 마일스톤)로 쓴 종합본이다. 지원사업 제출용은 별도로 초기창업패키지용 초안을 쓴다. 두 문서의 숫자는 같은 출처를 쓴다.
+<strong>표기</strong>: <code>[작성 필요]</code>는 자료가 없어 비운 곳, <code>(A##)</code>는 가정 목록의 ID, 성능·효과 수치는 모두 <strong>목표치(가설)</strong>다.
+<strong>시나리오 이름</strong>: 이 문서의 <strong>보수안</strong>은 financials의 "기준안"(보험 중개 제외), <strong>기준안</strong>은 financials의 "확장안"(보험 중개 포함), <strong>낙관안</strong>은 원본 AI 대화의 추정치다.</p></div>
+</div></header>
+<main class="wrap"><section class="sec" id="s0"><div class="sec-h"><span class="chap">0</span><h2>표지 · 요약</h2></div><p><strong>QLens — 앱 설치 없이 90초 만에 끝나는 AI 비대면 단말 진단</strong> · 주식회사 큐램(Qram) · 2026-10 · 초안 v0.1</p>
+<h3>Executive Summary</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>항목</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>문제</strong></td>
+<td>비대면 파손보험은 진단 앱 설치를 요구하면 가입 이탈이 크고(업계 추정 40~50%, A10), 검증을 느슨히 하면 사전 파손 기기와 화면 녹화 재생 같은 부정 가입으로 손해율이 오른다.</td>
+</tr>
+<tr>
+<td><strong>해법</strong></td>
+<td>QLens는 알림톡 링크 한 번으로 모바일 웹에서 거울 반사 AI 진단, 터치 점검, 위·변조 방지 검증을 약 90초 안에 끝내는 B2B 진단 엔진이다. Web SDK 한 줄과 Webhook으로 연동한다.</td>
+</tr>
+<tr>
+<td><strong>시장</strong></td>
+<td>국내 연관 시장(보험 가입·중고폰 검수·수리 청구 검증)은 연 약 126억 원으로 추정<span class="aid">A15</span>. 초기 목표는 자급제·알뜰폰 비대면 파손보험이며 잠재 약 120만 건/년<span class="aid">A04</span>.</td>
+</tr>
+<tr>
+<td><strong>모델</strong></td>
+<td>건당 과금(기준 400원). 초기 구축비·고정 라이선스 없음. 건당 직접 원가 약 11원<span class="aid">A02</span>으로 공헌이익 389원. 청구 FDS, 중고 연계, (자격 확보 시) 보험 중개로 확장.</td>
+</tr>
+<tr>
+<td><strong>목표</strong></td>
+<td>3개년 매출 보수안 0.48 → 1.83 → 4.59억 원, 기준안 2.16 → 6.03 → 9.63억 원. 초기 12개월은 PoC 계약 확보와 핵심 지표 검증에 집중.</td>
+</tr>
+<tr>
+<td><strong>선결 과제</strong></td>
+<td>보험업법 모집 자격 확인, 파손 단말 학습 데이터 확보, 첫 PoC 파트너 확정, 고정비 현실화.</td>
+</tr>
+</tbody>
+</table></div></section><section class="sec" id="s1"><div class="sec-h"><span class="chap">1</span><h2>문제 정의 · 시장 기회</h2></div><h3>1.1 비대면 파손보험의 구조적 딜레마</h3>
+<p>가입이 편해질수록 사기 위험이 커지고, 검증이 엄격해질수록 가입이 줄어드는 구조다.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th></th>
+<th>가입 이탈</th>
+<th>역선택·사기</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>원인</td>
+<td>전용 진단 앱 설치 요구</td>
+<td>개통·구매 후 비대면 가입 시 기기 상태를 직접 확인할 수 없음</td>
+</tr>
+<tr>
+<td>현상</td>
+<td>청약 단계 이탈</td>
+<td>사전 파손 기기 가입, 정상 폰 화면 녹화본 재생(Replay Attack)</td>
+</tr>
+<tr>
+<td>결과</td>
+<td>전환율 하락</td>
+<td>초기 손해율 상승</td>
+</tr>
+</tbody>
+</table></div>
+<h3>1.2 시장 동향</h3>
+<ul>
+<li><strong>채널 이동</strong>: 과거에는 개통 당일 대리점에서 가입하는 오프라인이 압도적이었다(원본 대화 추정 70~80%). 자급제·알뜰폰 확산으로 구매 후 비대면 가입이 늘고 있다.</li>
+<li><strong>새 경쟁 구도</strong>: 핀테크·디지털 손보사의 DIY형 휴대폰보험, 제조사 케어 프로그램의 비대면 가입이 통신사 부가서비스와 경쟁한다. 통신 3사도 개통 후 30~60일까지 비대면 사후 가입을 허용하는 추세다.</li>
+<li><strong>수요 요인</strong>: 플래그십 단말가 200만 원대, 디스플레이 수리비 40만~60만 원대로 보험 필요성이 커졌고 사용 주기가 길어졌다.</li>
+<li><strong>확장 영역</strong>: 중고폰 거래 검수와 수리 청구 단계의 부정 청구 방지로 진단 수요가 번진다.</li>
+<li>위 수치와 비중은 대부분 출처 확인 전 추정이다. 근거 확보 계획은 1.4에 둔다.</li>
+</ul>
+<h3>1.3 고객 페인포인트</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>고객</th>
+<th>페인포인트</th>
+<th>필요한 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>디지털 손보사·핀테크</td>
+<td>전환율 vs 손해율의 충돌, 서류 심사 비용·지연</td>
+<td>무설치 진단, 실시간 자동 판정, 감사 증적</td>
+</tr>
+<tr>
+<td>알뜰폰(MVNO)</td>
+<td>사후 가입 채널을 열고 싶으나 진단 앱 개발·유지 부담. 글로벌 솔루션은 초기비용·최소 물량 조건이 부담</td>
+<td>표준 SDK, 고정비 없는 종량제</td>
+</tr>
+<tr>
+<td>중고폰 플랫폼·렌탈사</td>
+<td>외관 등급의 주관성으로 분쟁, 보증 상품 사전 검수 비용</td>
+<td>객관적 진단 리포트, 보증 연계</td>
+</tr>
+</tbody>
+</table></div>
+<h3>1.4 근거 보강 계획 🔧</h3>
+<ul>
+<li>이탈률 40% 등 핵심 수치의 출처 확보(업계 자료, 고객사 퍼널 데이터)</li>
+<li>채널별 가입 비중(오프라인 70~80%, 온라인 15~20%)의 공신력 있는 출처 확보</li>
+<li>확보 전에는 본문에서 "추정"으로 표기하고, 확인되면 부록 D에서 확실도를 올린다</li>
+</ul></section><section class="sec" id="s2"><div class="sec-h"><span class="chap">2</span><h2>솔루션</h2></div><h3>2.1 제품 개요</h3>
+<ul>
+<li><strong>한 줄 정의</strong>: 링크 클릭 후 약 90초 안에 끝나는 설치 없는 비대면 단말 진단</li>
+<li><strong>핵심 가치</strong>: ① No-App(이탈 감소) ② 오탐을 줄이는 멀티프레임 비전 ③ 부정 가입을 막는 동적 라이브니스</li>
+<li><strong>제공 형태</strong>: 고객사 청약 페이지에 임베드하는 Web SDK + 서버 Webhook + 백오피스</li>
+</ul>
+<h3>2.2 핵심 기능 (MVP 4모듈)</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>모듈</th>
+<th>기능</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 웹 실행환경</td>
+<td>브라우저에서 카메라 구동(WebRTC), 브라우저 단 전처리(프레임 선별·흔들림 필터), 외곽선·기울기·거리 가이드 오버레이</td>
+</tr>
+<tr>
+<td>② 미러 비전 AI</td>
+<td>거울 앞에서 전·후면을 2단계로 스캔, 5~10장 연속 프레임으로 필름 기포·지문·반사와 실제 패널 크랙을 구분, 단색 화면 연속 표출로 데드픽셀 등 점검</td>
+</tr>
+<tr>
+<td>③ 안티스푸핑(FDS)</td>
+<td>무작위 숫자·색상 시퀀스를 거울 반사와 동기화 검증, 자이로·영상 움직임 대조, 탈옥·루팅·에뮬레이터 점검</td>
+</tr>
+<tr>
+<td>④ 하드웨어 진단</td>
+<td>터치 그리드 데드존 점검, 단말 모델·해상도·OS 자동 식별, IMEI 확인(다이얼패드 <code>*#06#</code> 화면 캡처 OCR)</td>
+</tr>
+</tbody>
+</table></div>
+<h3>2.3 고객 여정</h3>
+<p class="lab">최종 사용자(가입자)</p>
+<ol>
+<li>구매·개통 후 보험사 안내(알림톡/문자) 수신 → 링크 클릭</li>
+<li>브라우저에서 카메라·센서 권한 허용 (안내 화면)</li>
+<li>거울 앞에서 전면 → 후면 스캔, 화면 지시에 따라 기기를 기울임</li>
+<li>터치 그리드 문지르기, 단말 정보 확인</li>
+<li>약 90초 안에 결과 화면(통과 / 재촬영 / 심사 전환)과 청약 단계 복귀</li>
+</ol>
+<p class="lab">보험사·알뜰폰(고객사)</p>
+<ol>
+<li>청약 페이지에 SDK 삽입, 거래 ID 발급</li>
+<li>진단 완료 즉시 Webhook으로 판정(통과·실패·수동심사)과 위험 점수 수신</li>
+<li>통과 건은 자동 승인, 경계 건은 수동 심사 큐로 이동</li>
+<li>분쟁·손해사정 시 백오피스에서 진단 증적(원본 프레임, 타임스탬프, 센서 로그) 조회</li>
+</ol>
+<h3>2.4 연동 방식</h3>
+<ul>
+<li><strong>프론트</strong>: JavaScript Web SDK 또는 Iframe 임베드, 화이트라벨링(고객사 톤앤매너)</li>
+<li><strong>백엔드</strong>: REST API + Webhook(서명 검증), 판정 결과서(PDF)</li>
+<li><strong>감사 증적</strong>: 진단 원본 프레임·센서 로그를 암호화 저장, 위·변조 방지 해시, 보관 기간은 고객사 정책에 맞춰 설정(안: 3년, 3.4 참고)</li>
+<li>연동 일정 목표: 표준 SDK 기준 영업일 기준 2주 내 오픈 [검증 필요]</li>
+</ul>
+<h3>2.5 한계와 보완책 🔧</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>한계</th>
+<th>보완책</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>내부 부품 손상은 외관 스캔으로 알 수 없음</td>
+<td>서비스 범위를 "외관 + 기본 기능"으로 명시, 터치·디스플레이 점검 병행, 고객사 약관의 면책 범위 협의</td>
+</tr>
+<tr>
+<td>iOS Safari 등에서 센서·카메라 권한 제약</td>
+<td>권한 안내 UX, 센서 의존을 낮춘 대체 검증 경로, 주요 기종·브라우저 호환 시험</td>
+</tr>
+<tr>
+<td>조명·거울 환경에 따른 품질 편차</td>
+<td>실시간 품질 가이드, 재촬영 유도, 경계 점수는 수동 심사로 전환</td>
+</tr>
+<tr>
+<td>유사 필름 스크래치 오탐</td>
+<td>멀티프레임 분석과 평가셋 기반 임계값 튜닝, 오탐 시 사람 검수 경로</td>
+</tr>
+</tbody>
+</table></div></section><section class="sec" id="s3"><div class="sec-h"><span class="chap">3</span><h2>기술 · 개발 계획</h2></div><h3>3.1 아키텍처</h3>
+<figure class="fig"><div class="fig-scroll"><svg class="arch" viewBox="0 0 900 420" role="img" aria-labelledby="archT"><title id="archT">QLens 아키텍처: 사용자 브라우저에서 핵심 프레임과 센서 로그를 업로드하면 QLens 클라우드가 추론과 FDS 판정을 하고, 고객사에 Webhook, 리포트, 백오피스로 전달한다</title><defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ahp"/></marker></defs><rect class="lane" x="20" y="14" width="270" height="392" rx="8"/><text class="lt" x="36" y="40">사용자 브라우저</text><text class="ls" x="36" y="58">모바일 웹, 앱 설치 없음</text><rect class="lane" x="330" y="14" width="300" height="392" rx="8"/><text class="lt" x="346" y="40">QLens 클라우드</text><text class="ls" x="346" y="58">API · 추론 · FDS · 증적</text><rect class="lane" x="670" y="14" width="210" height="392" rx="8"/><text class="lt" x="686" y="40">고객사</text><text class="ls" x="686" y="58">보험사 · 알뜰폰</text><rect class="n" x="40" y="76" width="230" height="44" rx="6"/><text class="t" x="155.0" y="103.0" text-anchor="middle">알림톡 링크 열기</text><rect class="n" x="40" y="150" width="230" height="44" rx="6"/><text class="t" x="155.0" y="177.0" text-anchor="middle">WebRTC 카메라 · 센서</text><rect class="n" x="40" y="224" width="230" height="70" rx="6"/><text class="t" x="155.0" y="247.0" text-anchor="middle">Wasm/WebGPU 전처리</text><text class="s" x="155.0" y="266.0" text-anchor="middle">프레임 선별 · 흔들림 검사</text><text class="s" x="155.0" y="282.0" text-anchor="middle">난수 1차 대조</text><rect class="n hi" x="40" y="328" width="230" height="70" rx="6"/><text class="t" x="155.0" y="351.0" text-anchor="middle">핵심 프레임만 업로드</text><text class="s" x="155.0" y="370.0" text-anchor="middle">프레임 약 10장 (15MB)</text><text class="s" x="155.0" y="386.0" text-anchor="middle">+ 센서 로그 0.5MB</text><path class="a" d="M155.0 120 V150" marker-end="url(#ah)"/><path class="a" d="M155.0 194 V224" marker-end="url(#ah)"/><path class="a" d="M155.0 294 V328" marker-end="url(#ah)"/><rect class="n" x="350" y="76" width="260" height="44" rx="6"/><text class="t" x="480.0" y="103.0" text-anchor="middle">API 게이트웨이</text><rect class="n" x="350" y="150" width="260" height="70" rx="6"/><text class="t" x="480.0" y="173.0" text-anchor="middle">QLens AI 추론엔진</text><text class="s" x="480.0" y="192.0" text-anchor="middle">멀티프레임 비전 · 라이브니스</text><text class="s" x="480.0" y="208.0" text-anchor="middle">서버리스 GPU 약 0.8초/건</text><rect class="n" x="350" y="250" width="260" height="44" rx="6"/><text class="t" x="480.0" y="277.0" text-anchor="middle">FDS 룰엔진 · 위험 점수</text><rect class="n" x="350" y="328" width="260" height="70" rx="6"/><text class="t" x="480.0" y="351.0" text-anchor="middle">증적 저장</text><text class="s" x="480.0" y="370.0" text-anchor="middle">S3 → 아카이브</text><text class="s" x="480.0" y="386.0" text-anchor="middle">원본 프레임 · 센서 로그 · 해시</text><path class="a" d="M480.0 120 V150" marker-end="url(#ah)"/><path class="a" d="M480.0 220 V250" marker-end="url(#ah)"/><path class="a" d="M480.0 294 V328" marker-end="url(#ah)"/><path class="a up" d="M270 363 H300 V98 H350" marker-end="url(#ah)"/><text class="s" x="292" y="244" text-anchor="end" transform="rotate(-90 292 244)">업로드</text><rect class="n" x="690" y="150" width="170" height="56" rx="6"/><text class="t" x="775.0" y="174.0" text-anchor="middle">Webhook</text><text class="s" x="775.0" y="193.0" text-anchor="middle">판정 · 위험 점수</text><rect class="n" x="690" y="226" width="170" height="44" rx="6"/><text class="t" x="775.0" y="253.0" text-anchor="middle">판정 결과서 (PDF)</text><rect class="n" x="690" y="328" width="170" height="70" rx="6"/><text class="t" x="775.0" y="359.0" text-anchor="middle">백오피스</text><text class="s" x="775.0" y="378.0" text-anchor="middle">분쟁 시 증적 조회</text><path class="a" d="M610 272 H650 V178 H690" marker-end="url(#ah)"/><path class="a" d="M650 248 H690" marker-end="url(#ah)"/><path class="a" d="M610 363 H690" marker-end="url(#ah)"/></svg></div></figure>
+<ul>
+<li>전체 영상을 서버로 보내지 않고 핵심 프레임 약 10장(약 15MB)과 센서·라이브니스 로그(약 0.5MB)만 올려 대역폭과 추론 비용을 줄인다.</li>
+<li>서버 추론은 서버리스 GPU 기반으로 건당 약 0.8초를 가정한다(A17, 프로토타입 실측 필요).</li>
+</ul>
+<h3>3.2 기술 차별화 · 진입장벽</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>요소</th>
+<th>내용</th>
+<th>방어 가능성</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>필름 vs 패널 크랙 분리</td>
+<td>각도에 따른 반사 변화를 이용한 멀티프레임 분석</td>
+<td>데이터·모델 축적(진단이 쌓일수록 정확도 상승)</td>
+</tr>
+<tr>
+<td>리플레이 방어</td>
+<td>동적 패턴과 거울 반사의 ms 단위 동기화 + 센서 융합</td>
+<td>특허 출원 후보</td>
+</tr>
+<tr>
+<td>무설치 웹 경량화</td>
+<td>브라우저 전처리로 지연·트래픽 최소화</td>
+<td>구현 난도(기종·브라우저 호환)</td>
+</tr>
+<tr>
+<td>연동 용이성</td>
+<td>SDK 한 줄, 종량제</td>
+<td>영업 속도 우위(기술 장벽은 낮음)</td>
+</tr>
+</tbody>
+</table></div>
+<h3>3.3 개발 로드맵과 MVP 일정</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>단계</th>
+<th>기간(안)</th>
+<th>내용</th>
+<th>완료 기준</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MVP</td>
+<td>M1~M3</td>
+<td>웹 진단 엔진, SDK·샌드박스 API, 최소 백오피스</td>
+<td>시연 가능, 내부 시험 통과</td>
+</tr>
+<tr>
+<td>모델 고도화</td>
+<td>M2~M6</td>
+<td>파손 단말 데이터 확보, 평가셋 구축, 오탐률 튜닝</td>
+<td>목표 지표(오탐률 1% 미만, A11) 측정 리포트</td>
+</tr>
+<tr>
+<td>보안·컴플라이언스</td>
+<td>M3~M6</td>
+<td>개인정보 정책, 암호화·접근통제, 법무 검토</td>
+<td>점검표 통과</td>
+</tr>
+<tr>
+<td>PoC 대응</td>
+<td>M5~M7</td>
+<td>고객사 연동, 모니터링, 운영 지원</td>
+<td>PoC 결과 보고서</td>
+</tr>
+<tr>
+<td>운영 안정화</td>
+<td>M8~M12</td>
+<td>가용성·확장성, 다기종 호환, 청구 FDS 모듈</td>
+<td>안정 운영 지표</td>
+</tr>
+</tbody>
+</table></div>
+<h3>3.4 보안 · 개인정보 처리 🔧 (신규, 안)</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>항목</th>
+<th>안</th>
+<th>확인 필요</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>수집 범위</td>
+<td>거울 촬영 프레임, 센서 로그, 단말 모델·OS, IMEI(화면 캡처 OCR) 최소 수집</td>
+<td>개인정보처리 위탁 구조(고객사와의 위탁/공동처리 관계)</td>
+</tr>
+<tr>
+<td>동의</td>
+<td>진단 시작 전 목적·항목·보관 기간 고지와 동의</td>
+<td>고지 문구 법무 검토</td>
+</tr>
+<tr>
+<td>보관</td>
+<td>증적 보관 기간 3년 안(S3 → 아카이브 계층)</td>
+<td>보험사 요구 기간, 개인정보 최소 보관 원칙과의 균형</td>
+</tr>
+<tr>
+<td>보안</td>
+<td>전송·저장 암호화, 접근 통제와 감사 로그, 위·변조 방지 해시</td>
+<td>금융권 보안 요구 수준(고객사 심사)</td>
+</tr>
+<tr>
+<td>파기</td>
+<td>기간 만료 시 자동 파기</td>
+<td>파기 이력 관리</td>
+</tr>
+<tr>
+<td>영상 내 타인 정보</td>
+<td>거울에 비친 얼굴·배경 최소화 가이드, 불필요 프레임 폐기</td>
+<td>얼굴 포함 시 민감정보 해당 여부</td>
+</tr>
+</tbody>
+</table></div>
+<h3>3.5 정확도 · 탐지율을 검증 지표로 재정의 🔧</h3>
+<p>원본의 99.2%(파손 검출), 99.9%(위조 탐지), 87초 평균 같은 수치는 측정값이 아니다. 아래처럼 <strong>정의된 평가셋에서 측정할 지표</strong>로 바꾼다.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>지표</th>
+<th>목표치(가설)</th>
+<th>측정 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>패널 파손 검출 정확도</td>
+<td>99.2% 이상</td>
+<td>파손/정상 단말 평가셋 [ ]대, 필름·반사 혼재 포함</td>
+</tr>
+<tr>
+<td>오탐률(정상을 파손으로 판정)</td>
+<td>1% 미만</td>
+<td>정상 단말·필름 스크래치 평가셋</td>
+</tr>
+<tr>
+<td>리플레이 탐지율</td>
+<td>99.9% 이상</td>
+<td>모니터 재생·사전 녹화 공격 시나리오</td>
+</tr>
+<tr>
+<td>평균 진단 소요 시간</td>
+<td>약 90초</td>
+<td>PoC 실측</td>
+</tr>
+<tr>
+<td>진단 완료율</td>
+<td>고객사 퍼널 기준 측정</td>
+<td>PoC A/B</td>
+</tr>
+</tbody>
+</table></div></section><section class="sec" id="s4"><div class="sec-h"><span class="chap">4</span><h2>시장 분석</h2></div><h3>4.1 TAM-SAM-SOM</h3>
+<p>단가 400원 환산. 입력 건수는 가정<span class="aid">A15</span>, 글로벌 TAM은 출처 미확인<span class="aid">A16</span>.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>구분</th>
+<th>정의</th>
+<th>규모</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TAM (참고)</td>
+<td>글로벌 단말 진단·수명주기 시장</td>
+<td>약 4.5조 원 (미확인)</td>
+</tr>
+<tr>
+<td><strong>SAM</strong></td>
+<td>국내 보험 진단 34억 + 중고 검수 40억 + 청구 검증 52억</td>
+<td><strong>약 126억 원/년</strong> (처리 약 3,150만 건)</td>
+</tr>
+<tr>
+<td><strong>SOM</strong></td>
+<td>자급제·알뜰폰 비대면 파손보험, 잠재 약 120만 건 중 점유율 30%(Y3)</td>
+<td>연 36만 건, 진단료 약 1.4억 원</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>정합성 정정</strong>: 원본은 SOM(연 36~50만 건)과 매출 추정(Y2 보험 75만 건)이 맞지 않았다. 이 문서는 점유율 10% → 25% → 30%<span class="aid">A05</span>로 SOM에 맞춰 재계산했다. 보수안 Y3 총 처리 51만 건은 SAM 처리 건수의 약 1.6%다.</p>
+<h3>4.2 경쟁 분석</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>구분</th>
+<th>대표</th>
+<th>강점</th>
+<th>약점 / 한계</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>글로벌 진단 SW</td>
+<td>Blancco, MCE Systems</td>
+<td>통신사·금융권 레퍼런스, 인증</td>
+<td>앱·엔터프라이즈 라이선스, 경량 핀테크에는 무거움</td>
+</tr>
+<tr>
+<td>기기 케어 플랫폼(TPA)</td>
+<td>Servify</td>
+<td>보험·수리망까지 턴키</td>
+<td>플랫폼 종속, 턴키 계약 조건</td>
+</tr>
+<tr>
+<td>중고 검수</td>
+<td>Phonecheck, FutureDial</td>
+<td>리퍼·물류 검수 표준</td>
+<td>유선·하드웨어 중심, 소비자 셀프 비대면과 거리</td>
+</tr>
+<tr>
+<td>국내</td>
+<td>민팃(SK네트웍스 계열), 통신사·제조사 인하우스</td>
+<td>오프라인 키오스크, 자체 생태계</td>
+<td>모바일 웹 독립 진단 아님, 외부 개방 안 됨</td>
+</tr>
+</tbody>
+</table></div>
+<p>(경쟁사 가격·세부 기능은 공개 자료로 재확인 후 "추정"에서 격상한다. A14)</p>
+<h3>4.3 포지셔닝 맵 (화이트스페이스)</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>축</th>
+<th>글로벌 레거시</th>
+<th>기기 케어 플랫폼</th>
+<th><strong>QLens</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>가입 UX</td>
+<td>앱·유선</td>
+<td>앱 기반</td>
+<td><strong>웹 즉시 실행(무설치)</strong></td>
+</tr>
+<tr>
+<td>핵심 기술</td>
+<td>OS API·센서 로그</td>
+<td>기능 점검 + 보증</td>
+<td><strong>미러 비전 + 라이브니스</strong></td>
+</tr>
+<tr>
+<td>주요 고객</td>
+<td>대형 통신사·리퍼 공장</td>
+<td>제조사·대형 보험사</td>
+<td><strong>국내 디지털 손보사·알뜰폰·중고 플랫폼</strong></td>
+</tr>
+<tr>
+<td>도입</td>
+<td>엔터프라이즈 계약</td>
+<td>턴키</td>
+<td><strong>SDK + 종량제</strong></td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig"><div class="fig-scroll"><svg class="arch" viewBox="0 0 900 450" role="img" aria-labelledby="posT"><title id="posT">포지셔닝 맵: 가입 UX(앱 설치 필요에서 무설치 웹까지)와 도입 방식(엔터프라이즈 계약·턴키에서 SDK·종량제까지)의 두 축에서, 글로벌 레거시와 기기 케어 플랫폼은 왼쪽 아래에 있고 QLens는 오른쪽 위 빈 영역을 차지한다</title><defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ahp"/></marker></defs><rect class="lane" x="90" y="24" width="770" height="372" rx="8"/><path class="grid" d="M475 24 V396 M90 210 H860"/><rect class="ws" x="545" y="40" width="300" height="150" rx="10"/><text class="wst" x="835" y="62" text-anchor="end">화이트스페이스</text><path class="a" d="M90 396 H860" marker-end="url(#ah)"/><path class="a" d="M90 396 V24" marker-end="url(#ah)"/><text class="s" x="90" y="418">엔터프라이즈 계약 · 턴키</text><text class="s" x="860" y="418" text-anchor="end">SDK + 종량제</text><text class="lt" x="475" y="436" text-anchor="middle">도입 방식</text><text class="s" x="76" y="396" text-anchor="start" transform="rotate(-90 76 396)">앱·유선 설치 필요</text><text class="s" x="76" y="24" text-anchor="end" transform="rotate(-90 76 24)">웹 즉시 실행 (무설치)</text><text class="lt" x="48" y="210" text-anchor="middle" transform="rotate(-90 48 210)">가입 UX</text><rect class="n" x="105" y="304" width="230" height="84" rx="6"/><text class="t" x="220.0" y="326.0" text-anchor="middle">글로벌 레거시</text><text class="s" x="220.0" y="345.0" text-anchor="middle">앱·유선 · OS API·센서 로그</text><text class="s" x="220.0" y="361.0" text-anchor="middle">대형 통신사·리퍼 공장</text><text class="s" x="220.0" y="377.0" text-anchor="middle">엔터프라이즈 계약</text><rect class="n" x="235" y="214" width="230" height="84" rx="6"/><text class="t" x="350.0" y="236.0" text-anchor="middle">기기 케어 플랫폼</text><text class="s" x="350.0" y="255.0" text-anchor="middle">앱 기반 · 기능 점검 + 보증</text><text class="s" x="350.0" y="271.0" text-anchor="middle">제조사·대형 보험사</text><text class="s" x="350.0" y="287.0" text-anchor="middle">턴키</text><rect class="n hi" x="575" y="72" width="250" height="108" rx="6"/><text class="t" x="700.0" y="106.0" text-anchor="middle">QLens</text><text class="s" x="700.0" y="125.0" text-anchor="middle">웹 즉시 실행 · 미러 비전 + 라이브니스</text><text class="s" x="700.0" y="141.0" text-anchor="middle">국내 디지털 손보사·알뜰폰·중고 플랫폼</text><text class="s" x="700.0" y="157.0" text-anchor="middle">SDK + 종량제</text></svg></div><figcaption>위 표의 정성 비교를 두 축에 옮긴 개념도입니다. 위치는 상대적인 배치이며 수치가 아닙니다.</figcaption></figure>
+<h3>4.4 가격 근거 보강 🔧</h3>
+<p>경쟁사 건당 단가(1,500~3,000원)는 미확인<span class="aid">A14</span>이므로, 제안서에는 "추정"으로 쓰고 영업 과정에서 견적 사례로 대체한다.</p></section><section class="sec" id="s5"><div class="sec-h"><span class="chap">5</span><h2>비즈니스 모델</h2></div><h3>5.1 수익 스트림</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>수익원</th>
+<th>과금</th>
+<th>확실도</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>진단 API</td>
+<td>건당 350~500원 (기준 400원)</td>
+<td>가정<span class="aid">A01</span></td>
+<td>핵심, 진입장벽을 낮춤</td>
+</tr>
+<tr>
+<td>2</td>
+<td>청구 FDS 검증</td>
+<td>건당 1,000원</td>
+<td>가정<span class="aid">A07</span></td>
+<td>가입 시 외관과 청구 시 파손 데이터 대조</td>
+</tr>
+<tr>
+<td>3</td>
+<td>중고 매각 연계</td>
+<td>성사 건당 약 15,000원 (거래액의 3~5%)</td>
+<td>가정<span class="aid">A08</span></td>
+<td>진단 리포트 기반 매각 중개</td>
+</tr>
+<tr>
+<td>4</td>
+<td>보험 중개</td>
+<td>가입 성사 건당 약 4,000원</td>
+<td>가정 + <strong>법적 선결</strong><span class="aid">A09</span></td>
+<td>확장 옵션, 확정 수익에서 제외</td>
+</tr>
+</tbody>
+</table></div>
+<h3>5.2 가격 정책과 경쟁력</h3>
+<ul>
+<li><strong>정책</strong>: 초기 구축비·연 고정 라이선스·최소 물량 약정 없음. 볼륨 구간별 단가 인하(예: 월 대량 고객 350원, 최저 250~300원 검토).</li>
+<li><strong>과금 기준 확정 필요 🔧</strong>: "진단 호출당"으로 받을지 "청약 성공(통과) 건당"으로 받을지가 정해지지 않았다.</li>
+</ul>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>방식</th>
+<th>장점</th>
+<th>단점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>호출당</td>
+<td>실패·재시도 비용 보전, 매출 예측 쉬움</td>
+<td>고객사 입장에서 성과와 연동되지 않아 설득 어려움</td>
+</tr>
+<tr>
+<td>성공 건당</td>
+<td>고객 부담 낮음, 도입 설득 쉬움</td>
+<td>실패·이탈 건의 원가를 회사가 부담, 매출 변동 큼</td>
+</tr>
+<tr>
+<td>절충안(안)</td>
+<td>호출당 낮은 기본 단가 + 성공 시 추가</td>
+<td>계약 복잡도 증가</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>가격 포지션</strong>: 글로벌 대비 낮은 건당 단가(추정 1/4 수준)와 고정비 없는 구조. 낮은 단가가 가능한 이유는 5.3의 원가 구조다.</li>
+</ul>
+<h3>5.3 단위경제성 (건당)</h3>
+<p class="lab">직접 원가 (AWS 기준 추정, 환율 1,350원/USD, A02)</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>항목</th>
+<th>원가</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WebRTC 시그널링·대역폭</td>
+<td>약 2.3원</td>
+</tr>
+<tr>
+<td>GPU 서버리스 추론(약 0.8초)</td>
+<td>약 5.4원</td>
+</tr>
+<tr>
+<td>백엔드 API·FDS 연산</td>
+<td>약 0.4원</td>
+</tr>
+<tr>
+<td>스토리지·증적 보관(3년)</td>
+<td>약 2.0원</td>
+</tr>
+<tr>
+<td>네트워크·보안</td>
+<td>약 0.5원</td>
+</tr>
+<tr>
+<td><strong>합계</strong></td>
+<td><strong>약 10.6원 (약 11원)</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p class="lab">마진</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>지표</th>
+<th>400원</th>
+<th>350원</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>직접 원가</td>
+<td>11원</td>
+<td>11원</td>
+</tr>
+<tr>
+<td>공헌이익</td>
+<td>389원</td>
+<td>339원</td>
+</tr>
+<tr>
+<td>매출총이익률</td>
+<td>97.3%</td>
+<td>96.9%</td>
+</tr>
+</tbody>
+</table></div>
+<p>원본은 "간접비 반영 순마진 82.5%"를 제시했지만 산정 근거가 불명확해 이 문서에서는 사용하지 않는다. 손익은 7장에서 고정비를 반영해 직접 계산한다.</p>
+<h3>5.4 보험 중개 수수료의 법적 자격과 대안 🔧 (신규)</h3>
+<ul>
+<li><strong>쟁점</strong>: 보험 가입 중개·모집으로 수수료를 받으려면 보험업법상 모집 자격(보험대리점 또는 보험중개사 등록 등)이 필요할 수 있다. 법무 확인 전에는 수익에 확정 반영하지 않는다.</li>
+<li><strong>선택지(안)</strong></li>
+</ul>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>안</th>
+<th>내용</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>자격 취득(법인 보험대리점 등) 후 직접 중개</td>
+<td>요건·인력·비용 확인 필요</td>
+</tr>
+<tr>
+<td>B</td>
+<td>제휴 보험사·보험대리점에 진단을 공급하고 <strong>진단 서비스 대가만</strong> 수취</td>
+<td>법적으로 가장 단순, 수익은 낮음</td>
+</tr>
+<tr>
+<td>C</td>
+<td>제휴사 모집 채널과의 연계 수수료 구조</td>
+<td>리드·광고 성격 수수료의 허용 범위를 법무 검토</td>
+</tr>
+<tr>
+<td>- <strong>권고(초안)</strong>: 기준안 이전에는 B(진단 대가만)를 기본으로 두고, 자격 취득과 C는 PoC 결과 후 판단.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- 이 쟁점 때문에 매출 시나리오를 보수안(중개 제외)과 기준안(중개 포함)으로 나눈다.</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div></section><section class="sec" id="s6"><div class="sec-h"><span class="chap">6</span><h2>사업화 전략 (GTM)</h2></div><h3>6.1 단계별 타깃</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>단계</th>
+<th>시기(안)</th>
+<th>타깃</th>
+<th>이유</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>M1~M9</td>
+<td>디지털 손보사·핀테크</td>
+<td>의사결정이 빠르고 비대면 가입 확대가 절실, 레퍼런스 가치 큼</td>
+</tr>
+<tr>
+<td>2</td>
+<td>M6~M18</td>
+<td>중견 알뜰폰</td>
+<td>고정비 없는 종량제와 표준 SDK로 진입 장벽 낮춤, 자급제 사후 가입 채널 확대</td>
+</tr>
+<tr>
+<td>3</td>
+<td>M12~M24</td>
+<td>중고 플랫폼·렌탈, 청구 FDS</td>
+<td>진단 데이터 재사용, 단가가 높은 영역으로 확장</td>
+</tr>
+</tbody>
+</table></div>
+<h3>6.2 영업·제휴 전략과 4주 PoC</h3>
+<p><strong>원칙</strong>: 고객사 리스크를 최소화하기 위해 <strong>무상 4주 PoC</strong>로 전환율·탐지 성능을 직접 검증하게 한다.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>주차</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1주</td>
+<td>Web SDK 연동 가이드, 샌드박스 API 제공</td>
+</tr>
+<tr>
+<td>2주</td>
+<td>임직원·1차 테스트 그룹 100~200건 실단말 시험</td>
+</tr>
+<tr>
+<td>3주</td>
+<td>필름 스크래치·실제 파손·모니터 재생 등 이상 시나리오 검증</td>
+</tr>
+<tr>
+<td>4주</td>
+<td>전환율·오탐률·소요 시간 종합 리포트, 본계약 전환 협의</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>합격 기준(안, 사전에 합의)</strong>: 오탐률, 위조 탐지율, 평균 소요 시간, 진단 완료율 개선폭. 구체 수치는 고객사와 합의한다.
+<strong>제휴 채널</strong>: 보험 GA·인슈어테크 플랫폼, 알뜰폰 협회·사업자, 중고 플랫폼.</p>
+<h3>6.3 피칭 자료와 파트너 후보</h3>
+<ul>
+<li>피칭 덱 8장과 스크립트: 부록 A</li>
+<li>파트너 후보(접촉 전 가설): 카카오페이손보, 캐롯 등 디지털 손보사, 중견 알뜰폰 사업자, 번개장터·당근 등 중고 플랫폼 (후보일 뿐 접촉·의향 없음)</li>
+</ul>
+<h3>6.4 첫 PoC 후보사 리스트와 접촉 현황 🔧</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>후보</th>
+<th>유형</th>
+<th>접촉 경로</th>
+<th>상태</th>
+<th>다음 액션</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="todo">작성 필요</span></td>
+<td>디지털 손보사</td>
+<td></td>
+<td>미접촉</td>
+<td></td>
+</tr>
+<tr>
+<td><span class="todo">작성 필요</span></td>
+<td>알뜰폰</td>
+<td></td>
+<td>미접촉</td>
+<td></td>
+</tr>
+<tr>
+<td><span class="todo">작성 필요</span></td>
+<td>중고 플랫폼</td>
+<td></td>
+<td>미접촉</td>
+<td></td>
+</tr>
+</tbody>
+</table></div></section><section class="sec" id="s7"><div class="sec-h"><span class="chap">7</span><h2>재무 계획</h2></div><h3>7.1 3개년 매출 추정 (단위: 억 원)</h3>
+<p>상세 산식은 financials, 입력값은 assumptions.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>시나리오</th>
+<th>정의</th>
+<th>Y1</th>
+<th>Y2</th>
+<th>Y3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>보수안</strong></td>
+<td>진단 + FDS + 중고 연계 (보험 중개 제외)</td>
+<td>0.48</td>
+<td>1.83</td>
+<td>4.59</td>
+</tr>
+<tr>
+<td><strong>기준안</strong></td>
+<td>보수안 + 보험 중개</td>
+<td>2.16</td>
+<td>6.03</td>
+<td>9.63</td>
+</tr>
+<tr>
+<td><strong>낙관안</strong></td>
+<td>원본 AI 추정 (4개 수익원, 총 처리 30만 → 120만 → 350만 건)</td>
+<td>6.0</td>
+<td>24.2</td>
+<td>71.2</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>총 처리 건수</th>
+<th>Y1</th>
+<th>Y2</th>
+<th>Y3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>보수안·기준안</td>
+<td>12만</td>
+<td>33만</td>
+<td>51만</td>
+</tr>
+<tr>
+<td>낙관안</td>
+<td>30만</td>
+<td>120만</td>
+<td>350만</td>
+</tr>
+</tbody>
+</table></div>
+<p>낙관안은 근거가 부족해 의사결정에는 참고만 한다. 기준안의 52%(Y3)가 보험 중개 수수료라 5.4의 법적 검토가 선행되어야 한다.</p>
+<h3>7.2 비용 구조와 인력 계획 🔧 (신규)</h3>
+<p>현재 자료에는 <strong>월 고정비 3,000만 원(5인)</strong> 가정(인건비 2,500만 + 기타 500만)뿐이다.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>비용</th>
+<th>가정</th>
+<th>문제점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>인건비</td>
+<td>월 2,500만 원 (5인, 인당 약 500만 원)</td>
+<td>4대보험·퇴직급여 포함 시 개발 인력 시장가보다 낮을 가능성<span class="aid">A03</span></td>
+</tr>
+<tr>
+<td>기타</td>
+<td>월 500만 원 (사무실·툴 등)</td>
+<td>클라우드 변동비는 건당 원가에 별도 반영</td>
+</tr>
+<tr>
+<td>변동비</td>
+<td>건당 약 11원</td>
+<td>학습용 GPU·데이터 확보·라벨링 비용은 미반영</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>인력 계획(안, [작성 필요: 인원·채용 시기])</strong>: ML/비전 엔지니어, 프론트(WebRTC) 엔지니어, 백엔드·클라우드, 사업개발·제휴. 매출 증가에 따른 증원 시 BEP가 올라가므로 민감도(7.3)를 함께 본다.</p>
+<h3>7.3 BEP 분석 (월/연 단위 정정)</h3>
+<ul>
+<li>공헌이익 = 400원 − 11원 = <strong>389원/건</strong></li>
+<li><strong>진단료만의 BEP</strong>: 연 고정비 3.6억 ÷ 389원 ≈ <strong>연 약 92.5만 건 (월 약 7.7만 건)</strong></li>
+<li>정정: 원본의 "월 30만 건(Y1 목표)"은 연간 수치를 월로 오기. 연 30만 건은 월 약 2.5만 건이다.</li>
+<li>보수안 Y3(건당 평균 매출총이익 약 889원)의 BEP는 약 40.5만 건이며 Y3 처리 51만 건으로 흑자 전환</li>
+</ul>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>구분</th>
+<th>Y1</th>
+<th>Y2</th>
+<th>Y3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>영업이익 — 보수안</td>
+<td>−3.13</td>
+<td>−1.81</td>
+<td>+0.93</td>
+</tr>
+<tr>
+<td>영업이익 — 기준안</td>
+<td>−1.45</td>
+<td>+2.39</td>
+<td>+5.97</td>
+</tr>
+</tbody>
+</table></div>
+<p class="lab">민감도 (진단료만의 BEP, 연 건수)</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>변수</th>
+<th>값</th>
+<th>BEP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>단가</td>
+<td>300원 / 400원 / 500원</td>
+<td>약 124.6만 / 92.5만 / 73.6만 건</td>
+</tr>
+<tr>
+<td>고정비(단가 400원)</td>
+<td>월 2,400만 / 3,000만 / 4,500만 원</td>
+<td>약 74.0만 / 92.5만 / 138.8만 건</td>
+</tr>
+</tbody>
+</table></div>
+<h3>7.4 자금 소요와 조달 계획 🔧 (신규)</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>구분</th>
+<th>보수안</th>
+<th>기준안</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>누적 손익 저점</td>
+<td>약 −4.9억 원 (Y2 말)</td>
+<td>약 −1.5억 원 (Y1 말)</td>
+</tr>
+<tr>
+<td>해석</td>
+<td>흑자 전환 전까지 약 5억 원 안팎의 자금 필요</td>
+<td>중개 수익이 현실화되면 자금 필요가 크게 줄어듦</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>조달 후보(안)</strong>: 초기창업패키지 등 정부지원, 정책자금, 엔젤·시드 투자, 고객사 선급(PoC 후 계약 선결제)
+<strong><span class="todo">작성 필요</span></strong>: 자기자금 규모, 지원금 규모와 확정 시기, 자금 사용 우선순위(데이터 확보 → 개발 → PoC 운영)
+고정비를 월 4,500만 원으로 올리면 필요 자금이 더 커진다. 고정비를 먼저 재산정한 뒤 이 장을 확정한다.</p></section><section class="sec" id="s8"><div class="sec-h"><span class="chap">8</span><h2>팀 · 조직 🔧 (신규)</h2></div><blockquote>
+<p><strong>[본인 확인 필요]</strong> 재직 중인 회사의 겸업·영업비밀·이해충돌 규정과 이 사업의 업무 영역(워런티·케어)이 겹칠 수 있다. 대표자 소개에서 현 직책을 어디까지 쓸지, 창업 자격 요건이 맞는지는 사규와 공고를 확인한 뒤 정한다.</p>
+</blockquote>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>구분</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>대표자</td>
+<td>[이름] · 모바일 제조사에서 플랫폼 소프트웨어 설계, 클라우드·계정 서비스 기획, 보증·케어 서비스 경험기획 수행 (공개 범위는 본인 결정). 단말 케어의 사용자 경험과 사기·역선택 이슈에 대한 도메인 이해</td>
+</tr>
+<tr>
+<td>필요 역량(공백)</td>
+<td>컴퓨터 비전·ML, WebRTC 프런트엔드, 클라우드·보안, 보험·통신 영업</td>
+</tr>
+<tr>
+<td>채용 계획</td>
+<td>[작성 필요: 역할·시기·인원]</td>
+</tr>
+<tr>
+<td>자문단</td>
+<td>보험업법 전문 법무, 개인정보·보안, 보험업계 자문, 특허 변리 <span class="todo">작성 필요</span></td>
+</tr>
+<tr>
+<td>조직 형태</td>
+<td>주식회사 큐램, 가족법인 마두와의 관계 <span class="todo">작성 필요</span></td>
+</tr>
+</tbody>
+</table></div></section><section class="sec" id="s9"><div class="sec-h"><span class="chap">9</span><h2>리스크 · 대응</h2></div><p>평가는 초안 판단이며 PoC 후 갱신한다.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>리스크</th>
+<th>가능성</th>
+<th>영향</th>
+<th>대응</th>
+<th>중단 조건</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>기술: 오탐(정상 파손 판정)·미탐(파손 통과)이 목표를 못 맞춤</td>
+<td>중</td>
+<td>높음</td>
+<td>평가셋 확대, 수동 심사 경로, 임계값 이원화</td>
+<td>PoC에서 오탐률이 합의 기준을 연속 미달</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>규제: 보험업법 모집 자격, 개인정보</td>
+<td>중</td>
+<td>높음</td>
+<td>법무 자문, 중개 제외 시나리오를 기본으로, 진단 대가만 수취</td>
+<td>자격 취득 불가 + 진단 대가만으로 BEP 불가</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>고객 집중: 소수 고객사에 매출 편중</td>
+<td>높음</td>
+<td>중</td>
+<td>고객 3곳 이상 분산, 알뜰폰·중고로 확장</td>
+<td></td>
+</tr>
+<tr>
+<td>R4</td>
+<td>대기업 인하우스화: 통신사·제조사가 자체 웹 진단을 외부 개방 또는 내재화</td>
+<td>중</td>
+<td>높음</td>
+<td>속도·특허·데이터 축적, 중립 공급자 포지션</td>
+<td></td>
+</tr>
+<tr>
+<td>R5</td>
+<td>플랫폼 정책: iOS Safari의 카메라·센서·권한 정책 변경</td>
+<td>중</td>
+<td>중</td>
+<td>호환 시험 자동화, 대체 검증 경로</td>
+<td></td>
+</tr>
+<tr>
+<td>R6</td>
+<td>사기 진화: 생성형 AI 기반 위조 영상·재생 공격</td>
+<td>중</td>
+<td>높음</td>
+<td>챌린지 다양화, 센서 융합, 모델 지속 갱신</td>
+<td></td>
+</tr>
+<tr>
+<td>R7</td>
+<td>단가 하락: 경쟁 심화·고객 협상</td>
+<td>중</td>
+<td>중</td>
+<td>원가 우위(약 11원), 고단가 수익원 병행</td>
+<td>단가 300원 이하로 BEP 크게 악화</td>
+</tr>
+<tr>
+<td>R8</td>
+<td>자금: 흑자 전환 전 자금 부족</td>
+<td>높음</td>
+<td>높음</td>
+<td>정부지원 + 시드, 선급 계약, 고정비 통제</td>
+<td>런웨이 6개월 미만</td>
+</tr>
+<tr>
+<td>R9</td>
+<td>데이터: 학습용 파손 단말 확보 지연</td>
+<td>높음</td>
+<td>높음</td>
+<td>중고 파손폰 매입, 수리점·리퍼 제휴, 합성 데이터</td>
+<td></td>
+</tr>
+</tbody>
+</table></div></section><section class="sec" id="s10"><div class="sec-h"><span class="chap">10</span><h2>마일스톤 · 성과 지표</h2></div><h3>10.1 12개월 로드맵 (안)</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>시기</th>
+<th>마일스톤</th>
+<th>완료 기준</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1~M3</td>
+<td>MVP 완성, SDK·샌드박스</td>
+<td>내부 시연</td>
+</tr>
+<tr>
+<td>M2~M6</td>
+<td>데이터 확보, 모델 평가</td>
+<td>평가 리포트(오탐률·검출률)</td>
+</tr>
+<tr>
+<td>M3~M6</td>
+<td>보안·개인정보 정책, 법무 검토, 특허 출원</td>
+<td>정책 확정, 출원 [ ]건</td>
+</tr>
+<tr>
+<td>M5~M7</td>
+<td>첫 PoC (4주)</td>
+<td>결과 보고서, 합격 기준 충족 여부</td>
+</tr>
+<tr>
+<td>M7~M9</td>
+<td>PoC → 유료 계약 전환</td>
+<td>계약 [ ]건</td>
+</tr>
+<tr>
+<td>M9~M12</td>
+<td>2호 고객 확보, 중고 플랫폼 PoC 착수, 운영 안정화</td>
+<td>월 처리 건수 [ ]</td>
+</tr>
+</tbody>
+</table></div>
+<h3>10.2 핵심 KPI</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>KPI</th>
+<th>정의</th>
+<th>12개월 목표(안)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>오탐률</td>
+<td>정상 단말 중 파손 오판정 비율</td>
+<td>1% 미만 <span class="aid">A11</span></td>
+</tr>
+<tr>
+<td>위조 탐지율</td>
+<td>공격 시나리오 중 차단 비율</td>
+<td>99.9% (A11, 가설)</td>
+</tr>
+<tr>
+<td>평균 진단 소요 시간</td>
+<td>링크 진입 → 결과</td>
+<td>약 90초</td>
+</tr>
+<tr>
+<td>진단 완료율</td>
+<td>시작 대비 완료 비율</td>
+<td>PoC에서 기준선 측정 후 목표 설정</td>
+</tr>
+<tr>
+<td>고객사 전환율 개선폭</td>
+<td>청약 완료율 (앱 방식 대비)</td>
+<td>PoC A/B (원본 가설 +35%p)</td>
+</tr>
+<tr>
+<td>유료 계약 수</td>
+<td>본계약 전환 고객사</td>
+<td>[ ]곳 (보수안 Y1 처리 12만 건 달성에 2~3곳 필요)</td>
+</tr>
+<tr>
+<td>월 처리 건수</td>
+<td>진단 + FDS</td>
+<td>Y1 평균 월 1만 건</td>
+</tr>
+<tr>
+<td>건당 원가</td>
+<td>직접 클라우드 원가</td>
+<td>약 11원 이하 (실측)</td>
+</tr>
+</tbody>
+</table></div></section><section class="sec" id="s11"><div class="sec-h"><span class="chap">부록</span><h2>부록</h2></div><h3>A. 피칭 덱 8장 (요약)</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>제목</th>
+<th>핵심 메시지</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>타이틀</td>
+<td>앱 설치 없이 90초 만에 끝나는 파손보험 비대면 언더라이팅 인프라, QLens</td>
+</tr>
+<tr>
+<td>2</td>
+<td>시장의 기회와 모순</td>
+<td>비대면 시장은 열렸으나 가입 이탈과 사기 리스크가 성장을 막음</td>
+</tr>
+<tr>
+<td>3</td>
+<td>솔루션</td>
+<td>알림톡 링크 → 웹에서 거울 비전 + 동적 라이브니스</td>
+</tr>
+<tr>
+<td>4</td>
+<td>기술 메커니즘</td>
+<td>브라우저 전처리 → 미러 비전·라이브니스 → 즉시 판정·Webhook (성능 수치는 목표치로 표기)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>정량 효과</td>
+<td>전환율 개선, 심사 시간 단축, 부정 손해율 방어 (PoC 검증 대상)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>연동·보안</td>
+<td>SDK 1줄, Webhook, 감사 증적</td>
+</tr>
+<tr>
+<td>7</td>
+<td>가격·제휴</td>
+<td>건당 종량제, 구축비 없음</td>
+</tr>
+<tr>
+<td>8</td>
+<td>4주 PoC</td>
+<td>1주 연동 → 2주 실단말 → 3주 이상 시나리오 → 4주 리포트</td>
+</tr>
+</tbody>
+</table></div>
+<p>원본 피칭 덱의 "이탈률 0%", 99.2%, 99.9%, +35%p, 18%, 70% 등은 <strong>목표치(가설)</strong>로만 사용한다. 전체 스크립트는 원본 대화에 있다.</p>
+<h3>B. MVP 상세 스펙 · Webhook 예시</h3>
+<p><strong>스펙 요약</strong>: 2.2의 4모듈 + 연동(Web SDK/Iframe, Webhook, 백오피스 감사 대시보드)</p>
+<p><strong>Webhook 응답 예시</strong> (값은 예시)</p>
+<pre><code class="language-json">{
+  &quot;transaction_id&quot;: &quot;TX_EXAMPLE_0001&quot;,
+  &quot;model_name&quot;: &quot;Galaxy S24 Ultra&quot;,
+  &quot;pass_status&quot;: &quot;PASS&quot;,
+  &quot;risk_score&quot;: 12,
+  &quot;checks&quot;: {
+    &quot;screen_crack&quot;: &quot;CLEAN&quot;,
+    &quot;back_glass&quot;: &quot;CLEAN&quot;,
+    &quot;touch_deadzone&quot;: &quot;NONE&quot;,
+    &quot;liveness_verified&quot;: true
+  },
+  &quot;report_url&quot;: &quot;https://api.example.com/v1/cert/EXAMPLE.pdf&quot;
+}
+</code></pre>
+<h3>C. 원가 산출표 (AWS 항목별, 건당)</h3>
+<p>5.3의 표 참조. 가정: 진단 90초, 업로드 핵심 프레임 10장(약 15MB)+센서 로그 0.5MB, 환율 1,350원/USD, 서버리스 GPU 추론 약 0.8초. <strong>모두 프로토타입 실측으로 대체 예정.</strong></p>
+<h3>D. 가정 · 검증 필요 항목</h3>
+<p>전체 목록은 assumptions. 우선 확보할 것:</p>
+<ol>
+<li>A10 이탈률 40~50% 출처</li>
+<li>A14 경쟁사 건당 가격</li>
+<li>A09/A18 보험업법·개인정보 법무 검토</li>
+<li>A03 고정비 재산정(인건비 현실화)</li>
+<li>A11~A12 성능·효과 수치는 PoC로 실측 후 교체</li>
+</ol></section></main>
+<footer class="foot"><div class="wrap">QLens 사업기획서 종합본 초안 v0.1 · 성능·효과 수치는 모두 목표치(가설)이며, (A##)는 가정 목록의 ID입니다.</div></footer>
+<script>(function(){var L=[].slice.call(document.querySelectorAll('.nav a'));if(!('IntersectionObserver' in window))return;
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){L.forEach(function(a){var on=a.dataset.s===e.target.id;a.classList.toggle('on',on);if(on){var n=a.parentNode;n.scrollLeft=a.offsetLeft-n.clientWidth/2+a.clientWidth/2}})}})},{rootMargin:'-20% 0px -70% 0px'});
+document.querySelectorAll('section.sec').forEach(function(s){io.observe(s)})})();</script></body></html>
